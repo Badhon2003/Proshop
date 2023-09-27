@@ -1,0 +1,119 @@
+main {
+  min-height: 84vh;
+}
+
+h1 {
+  font-size: 1.8rem;
+  padding: 1rem 0;
+}
+h2 {
+  font-size: 1.3rem;
+  padding: 0.5rem 0;
+}
+h3 {
+  padding: 1rem 0;
+}
+
+.rating span {
+  margin: 0.1rem;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+}
+
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark {
+  padding: 0.7rem;
+}
+
+header .container {
+  position: relative;
+}
+
+.loader {
+  height: 1.8rem;
+  width: 1.8rem;
+  border-radius: 50%;
+  border: 0.2rem solid #fff;
+  border-left-color: #343a40;
+  -webkit-animation: spin 2s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+header .loader {
+  position: absolute;
+  z-index: 5;
+  left: 8rem;
+  top: 0.3rem;
+}
+
+.paypal-btn-loader .loader {
+  margin: auto;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.product-select {
+  width: 100%;
+  padding: 0.3rem;
+  background-color: #d0deeb;
+  border: none;
+}
+
+.product-option {
+  color: #343a40;
+  text-align: center;
+}
+
+@media only screen and (min-width: 768px) {
+  .cart-item {
+    align-items: center;
+  }
+}
+
+/* Carousel  */
+
+.carousel-item-next,
+.carousel-item-prev,
+.carousel-item.active {
+  display: flex;
+}
+
+.carousel-caption {
+  position: absolute;
+  top: 0;
+}
+
+.carousel-caption h2 {
+  color: #fff;
+}
+.carousel img {
+  height: 300px;
+  padding: 30px;
+  margin: 40px;
+  margin-top: 70px;
+  border-radius: 2rem;
+}
+
+.carousel a {
+  margin: 0 auto;
+}
