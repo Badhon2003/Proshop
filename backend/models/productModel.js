@@ -28,6 +28,10 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      default: 'Draft' // Active, Sold, Expired
+    },
     image: {
       type: String,
       required: true,

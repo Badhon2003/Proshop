@@ -2,6 +2,8 @@ import axios from 'axios'
 import {
   PRODUCT_LIST_SUCCESS,
   PRODUCT_LIST_FAIL,
+  PRODUCT_ACTIVE_LIST_SUCCESS,
+  PRODUCT_ACTIVE_LIST_FAIL,
   PRODUCT_DETAILS_SUCCESS,
   PRODUCT_DETAILS_FAIL,
   PRODUCT_DETAILS_CLEAR,
@@ -31,6 +33,28 @@ export const listProducts = (keyword = '', page = '') => async (dispatch) => {
   } catch (error) {
     dispatch({
       type: PRODUCT_LIST_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    })
+    dispatch({ type: LOADING_FALSE })
+  }
+}
+
+export const listActiveProducts = (keyword = '', page = '') => async (dispatch) => {
+  try {
+    dispatch({ type: PRODUCT_DETAILS_CLEAR })
+    dispatch({ type: LOADING_TRUE })
+    const { data } = await axios.get(
+      `/api/products/active?keyword=${keyword}&page=${page}`
+    )
+
+    dispatch({ type: PRODUCT_ACTIVE_LIST_SUCCESS, payload: data })
+    dispatch({ type: LOADING_FALSE })
+  } catch (error) {
+    dispatch({
+      type: PRODUCT_ACTIVE_LIST_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

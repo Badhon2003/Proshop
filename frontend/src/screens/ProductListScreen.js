@@ -54,6 +54,10 @@ const ProductListScreen = ({ history, match }) => {
     pageNumber,
   ])
 
+  useEffect(() => {
+    console.log('products list: ', products)
+  }, [products])
+
   const deleteHandler = (id) => {
     if (window.confirm('Are you sure!')) {
       dispatch(deleteProduct(id))
@@ -97,6 +101,7 @@ const ProductListScreen = ({ history, match }) => {
                   <th>ID</th>
                   <th>NAME</th>
                   <th>PRICE</th>
+                  <th>STATUS</th>
                   <th>CATEGORY</th>
                   <th>BRAND</th>
                   <th></th>
@@ -108,6 +113,7 @@ const ProductListScreen = ({ history, match }) => {
                     <td>{product._id}</td>
                     <td>{product.name}</td>
                     <td>${product.price}</td>
+                    <td>{product.status}</td>
                     <td>{product.category}</td>
                     <td>{product.brand}</td>
 

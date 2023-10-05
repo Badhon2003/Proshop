@@ -9,6 +9,7 @@ import productRoutes from './routes/productRoutes.js'
 import userRoutes from './routes/userRoutes.js'
 import orderRoutes from './routes/orderRoutes.js'
 import uploadRoutes from './routes/uploadRoutes.js'
+import initializeSocketIO from './socket.js'
 
 dotenv.config()
 
@@ -43,7 +44,10 @@ app.use(errorHandler)
 
 const PORT = process.env.PORT || 5000
 
-app.listen(
+const server = app.listen(
   PORT,
   console.log(`Server Running in ${process.env.NODE_ENV} mode on port ${PORT}`)
 )
+
+
+initializeSocketIO(server)

@@ -8,9 +8,11 @@ import Loader from '../components/Loader'
 import FormContainer from '../components/FormContainer'
 import { listProductDetails, updateProduct } from '../actions/productActions'
 import { PRODUCT_UPDATE_RESET } from '../constants/productConstants'
+import { useSocket } from '../contexts/SocketContext'
 
 const ProductEditScreen = ({ match, history }) => {
   const productId = match.params.id
+  const { alertWithSocket } = useSocket()
 
   const [name, setName] = useState('')
   const [price, setPrice] = useState(0)
@@ -33,8 +35,12 @@ const ProductEditScreen = ({ match, history }) => {
 
   useEffect(() => {
     if (successUpdate) {
-      // console.log(productUpdate)
+      console.log('successUpdate: ', successUpdate)
       dispatch({ type: PRODUCT_UPDATE_RESET })
+      
+      
+      alertWithSocket('product')
+      
       history.push('/admin/product-list')
     } else {
       if (!product.name || product._id !== productId) {
