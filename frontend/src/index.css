@@ -117,3 +117,8 @@ header .loader {
 .carousel a {
   margin: 0 auto;
 }
+
+
+.fa-gavel, .fa-eye, .fa-edit {
+  font-size: 14px;
+}

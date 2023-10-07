@@ -8,7 +8,6 @@ import Message from '../components/Message'
 import Paginate from '../components/Paginate'
 import Meta from '../components/Meta'
 import { listActiveProducts } from '../actions/productActions'
-import ProductCarousel from '../components/ProductCarousel'
 import { useSocket } from '../contexts/SocketContext'
 
 const HomeScreens = ({ match }) => {
@@ -16,7 +15,7 @@ const HomeScreens = ({ match }) => {
   const pageFromQuery = match.params.page || 1
 
   const dispatch = useDispatch()
-  const { alertWithSocket, updateKey, updateTime } = useSocket()
+  const { updateKey, updateTime } = useSocket()
 
   const [updateTimeLocal, setUpdateTimeLocal] = useState('')
   
@@ -31,6 +30,7 @@ const HomeScreens = ({ match }) => {
   }, [dispatch, keyword, pageFromQuery])
 
   useEffect(() => {
+    console.log('update key  changed: ', updateKey)
     if (updateTime !== updateTimeLocal && updateKey === 'product') {
       dispatch(listActiveProducts(keyword, pageFromQuery))
       setUpdateTimeLocal(updateTime)

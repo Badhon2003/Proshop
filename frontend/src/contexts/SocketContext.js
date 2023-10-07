@@ -9,7 +9,7 @@ export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [updateKey, setUpdateKey] = useState('')
   const [updateTime, setUpdateTime] = useState('')
-  // const [newReqCheck, setNewReqCheck] = useState(Math.random().toString());
+  const [listenerAdded, setListenderAdded] = useState(false);
 
   useEffect(() => {
     const newSocket = socketIOClient(SOCKET_SERVER_URL);
@@ -34,23 +34,19 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (socket) {
-      console.log('somthing is updating :) socket.connected: ', socket.connected)
+    if (socket && !listenerAdded) {
+      setListenderAdded(true)
       socket.on('update-client', (resMsg) => {
-        console.log('context - resMsg msg: ', resMsg)
         setUpdateKey(resMsg)
         setUpdateTime((new Date()).toISOString())
       })
     }
-  })
+  }, [socket, listenerAdded])
 
   const alertWithSocket = (reqMsg) => {
-    // // console.log('reqMsg: ', reqMsg)
-    // setNewReqCheck(Math.random().toString())
     socket.emit('update-custom', reqMsg)
-
   }
-//  key={newReqCheck}
+
   return (
     <SocketContext.Provider value={{ alertWithSocket, updateKey, updateTime }}>
       {children}

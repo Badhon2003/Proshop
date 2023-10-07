@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler'
 import Product from '../models/productModel.js'
+import Bid from '../models/bidModel.js'
 
 // @desc    Fetch all Produts
 // @route   GET /api/products
@@ -62,6 +63,36 @@ const getProductById = asyncHandler(async (req, res) => {
   }
 })
 
+
+// @desc    GET logged in user products
+// @route   GET /api/products/my
+// @access  Private
+const getMyProducts = asyncHandler(async (req, res) => {
+  console.log('req.params: ', req.params)
+  const products = await Product.find({ user: req.params.userId })
+  // console.log('products: ', products)
+  res.json(products)
+})
+
+// @desc    GET logged in user products
+// @route   GET /api/products/my
+// @access  Private
+const getPurchasedProducts = asyncHandler(async (req, res) => {
+  console.log('req.params: ', req.params)
+  const products = await Product.find({ status: 'Sold' })
+  const _filteredProducts = []
+  for (const product of products) {
+    const lastBid = await Bid.findOne({ product: product._id }).sort('-price')
+    
+    if (lastBid && lastBid.user.toString() === req.params.userId) {
+      _filteredProducts.push(product)
+    }
+  }
+  
+  // console.log('products: ', products)
+  res.json(_filteredProducts)
+})
+
 // @desc    DELETE a single product
 // @route   GET /api/products/:id
 // @access  private/Admin
@@ -86,6 +117,7 @@ const createProduct = asyncHandler(async (req, res) => {
     user: req.user._id,
     image: '/images/sample.png',
     brand: 'Sample brand',
+    status: 'Draft',
     category: 'Sample category',
     countInStock: 0,
     numReviews: 0,
@@ -102,23 +134,45 @@ const createProduct = asyncHandler(async (req, res) => {
 const updateProduct = asyncHandler(async (req, res) => {
   const {
     name,
-    price,
     description,
     image,
     brand,
+    status,
     category,
     countInStock,
   } = req.body
 
+  console.log('req.body: ', req.body)
+
   const product = await Product.findById(req.params.id)
   if (product) {
     product.name = name
-    product.price = price
+    product.status = status
     product.description = description
     product.image = image
     product.brand = brand
     product.category = category
     product.countInStock = countInStock
+
+    const updatedProduct = await product.save()
+    res.json(updatedProduct)
+  } else {
+    req.status(404)
+    throw new Error('Product not found')
+  }
+})
+
+// @desc    update a single product
+// @route   put /api/products/status/:id
+// @access  private/Admin
+const updateProductStatus = asyncHandler(async (req, res) => {
+  const {
+    status,
+  } = req.body
+
+  const product = await Product.findById(req.params.id)
+  if (product) {
+    product.status = status
 
     const updatedProduct = await product.save()
     res.json(updatedProduct)
@@ -173,6 +227,9 @@ const getTopProducts = asyncHandler(async (req, res) => {
 })
 
 export {
+  getMyProducts,
+  updateProductStatus,
+  getPurchasedProducts,
   getProducts,
   getProductById,
   deleteProduct,

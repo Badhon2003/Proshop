@@ -17,6 +17,10 @@ import {
   PRODUCT_CREATE_REVIEW_RESET,
   PRODUCT_TOP_SUCCESS,
   PRODUCT_TOP_FAIL,
+  PRODUCT_MY_LIST_SUCCESS,
+  PRODUCT_MY_LIST_FAIL,
+  PRODUCT_PURCHASED_LIST_SUCCESS,
+  PRODUCT_PURCHASED_LIST_FAIL
 } from '../constants/productConstants'
 
 export const productListReducer = (state = { products: [] }, action) => {
@@ -31,6 +35,39 @@ export const productListReducer = (state = { products: [] }, action) => {
     case PRODUCT_LIST_FAIL:
       return { error: action.payload }
 
+    default:
+      return state
+  }
+}
+
+
+export const productListMyReducer = (state = { myProducts: [] }, action) => {
+  switch (action.type) {
+    case PRODUCT_MY_LIST_SUCCESS:
+      return {
+        myProducts: action.payload
+      }
+
+    case PRODUCT_MY_LIST_FAIL:
+      return { error: action.payload }
+    
+    default:
+      return state
+  }
+}
+
+
+
+export const productListMyPurchasedReducer = (state = { purchasedProducts: [] }, action) => {
+  switch (action.type) {
+    case PRODUCT_PURCHASED_LIST_SUCCESS:
+      return {
+        purchasedProducts: action.payload
+      }
+
+    case PRODUCT_PURCHASED_LIST_FAIL:
+      return { error: action.payload }
+    
     default:
       return state
   }

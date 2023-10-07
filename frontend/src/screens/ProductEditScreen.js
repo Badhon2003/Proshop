@@ -15,9 +15,10 @@ const ProductEditScreen = ({ match, history }) => {
   const { alertWithSocket } = useSocket()
 
   const [name, setName] = useState('')
-  const [price, setPrice] = useState(0)
+  // const [price, setPrice] = useState(0)
   const [image, setImage] = useState('')
   const [brand, setBrand] = useState('')
+  const [status, setStatus] = useState('')
   const [category, setCategory] = useState('')
   const [countInStock, setCountInStock] = useState(0)
   const [description, setDescription] = useState('')
@@ -47,9 +48,9 @@ const ProductEditScreen = ({ match, history }) => {
         dispatch(listProductDetails(productId))
       } else {
         setName(product.name)
-        setPrice(product.price)
         setImage(product.image)
         setBrand(product.brand)
+        setStatus(product.status)
         setCategory(product.category)
         setCountInStock(product.countInStock)
         setDescription(product.description)
@@ -64,8 +65,8 @@ const ProductEditScreen = ({ match, history }) => {
       updateProduct({
         _id: productId,
         name,
-        price,
         image,
+        status,
         brand,
         category,
         description,
@@ -94,12 +95,23 @@ const ProductEditScreen = ({ match, history }) => {
       console.error(error)
       setUploading(false)
     }
-  }
+  }//to=
   return (
     <>
-      <Link to='/admin/product-list' className='btn btn-light my-3'>
+      <Button
+        className='btn btn-light my-3'
+        onClick={() => {
+          const _from = localStorage.getItem('product-edit')
+          localStorage.removeItem('product-edit')
+          if (_from === 'from-profile') {
+            history.push('/profile')
+          } else {
+            history.push('/admin/product-list')
+          }
+        }}
+      >
         Go Back
-      </Link>
+      </Button>
       <FormContainer>
         <h1>Edit Product</h1>
         {error ? (
@@ -118,14 +130,19 @@ const ProductEditScreen = ({ match, history }) => {
                   onChange={(e) => setName(e.target.value)}
                 ></Form.Control>
               </Form.Group>
-              <Form.Group controlId='price'>
-                <Form.Label>Price</Form.Label>
+              <Form.Group controlId='rating'>
+                <Form.Label>Status</Form.Label>
                 <Form.Control
-                  type='number'
-                  placeholder='Enter price'
-                  value={price}
-                  onChange={(e) => setPrice(e.target.value)}
-                ></Form.Control>
+                  as='select'
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value=''>Select...</option>
+                  <option value='Draft'>Draft</option>
+                  <option value='Active'>Active</option>
+                  <option value='Sold'>Sold</option>
+                  <option value='Expired'>Expired</option>
+                </Form.Control>
               </Form.Group>
 
               <Form.Group controlId='image'>

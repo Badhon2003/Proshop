@@ -6,21 +6,35 @@ import Rating from '../components/Rating'
 import {
   listProductDetails,
   createProductReview,
+  updateProductStatus,
 } from '../actions/productActions'
 import Message from '../components/Message'
 import { PRODUCT_CREATE_REVIEW_RESET } from '../constants/productConstants'
 import Meta from '../components/Meta'
+import { createBid } from '../actions/bidActions'
+import { useSocket } from '../contexts/SocketContext'
+import { BID_CREATE_RESET } from '../constants/bidConstants'
 
 const ProductScreen = ({ history, match }) => {
-  const [qty, setQty] = useState(1)
+  // const [qty, setQty] = useState(1)
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
+  const [productStatus, setProductStatus] = useState('')
+  const [updateTimeLocal, setUpdateTimeLocal] = useState('')
+  const [newPrice, setNewPrice] = useState('')
+  
+  const { alertWithSocket, updateKey, updateTime } = useSocket()
 
   const dispatch = useDispatch()
   const { loading } = useSelector((state) => state.loader)
 
   const productDetails = useSelector((state) => state.productDetails)
   const { error, product } = productDetails
+
+  const productUpdate = useSelector((state) => state.productUpdate)
+
+  const bidCreate = useSelector((state) => state.bidCreate)
+  
 
   const userLogin = useSelector((state) => state.userLogin)
   const { userInfo } = userLogin
@@ -32,6 +46,12 @@ const ProductScreen = ({ history, match }) => {
   } = productReviewCreate
 
   useEffect(() => {
+    return () => {
+      dispatch({ type: BID_CREATE_RESET })
+    }
+  }, [])
+
+  useEffect(() => {
     if (successProductReview) {
       alert('Review Submitted')
       setRating(0)
@@ -41,8 +61,60 @@ const ProductScreen = ({ history, match }) => {
     dispatch(listProductDetails(match.params.id))
   }, [dispatch, match, successProductReview])
 
-  const addToCartHandler = () => {
-    history.push(`/cart/${match.params.id}?qty=${qty}`)
+  useEffect(() => {
+    if (updateTime !== updateTimeLocal && updateKey === 'product') {
+      dispatch(listProductDetails(match.params.id))
+      setUpdateTimeLocal(updateTime)
+    }
+  }, [updateKey, updateTime])
+
+  useEffect(() => {
+    if (bidCreate && bidCreate.success) {
+      dispatch(listProductDetails(match.params.id))
+    }
+  }, [bidCreate])
+  
+  useEffect(() => {
+    if (product && product.price) {
+      setNewPrice(parseInt(product.price))
+    }
+  }, [product])
+  useEffect(() => {
+    // console.log('product: ', product.user)
+    // console.log('userInfo: ', userInfo._id)
+    setProductStatus(product?.status || '')
+  }, [product])
+
+
+  useEffect(() => {
+    console.log('bidCreate: ', bidCreate)
+    // console.log('bidList: ', bidList)
+  }, [bidCreate])
+
+  useEffect(() => {
+    if (productUpdate && productUpdate.success) {
+      alertWithSocket('product')
+    }
+  }, [productUpdate])
+
+
+  const bidHandler = () => {
+    console.log('new price: ', newPrice)
+    if (parseFloat(newPrice) < parseFloat(product.price)) {
+      alert('New Price must be greater than previous.')
+    } else {
+      dispatch(createBid({
+        product: product._id,
+        user: userInfo._id,
+        price: newPrice
+      }, alertWithSocket ))
+    }
+  }
+
+  const submitStatusHandler = () => {
+    if (product && product._id) {
+      dispatch(updateProductStatus(product._id, productStatus))
+    }
   }
 
   const submitHandler = (e) => {
@@ -54,15 +126,28 @@ const ProductScreen = ({ history, match }) => {
       })
     )
   }
+
+
+
+
   return (
     <>
-      <Link className='btn btn-light my-3' to='/'>
+      <button
+        className='btn btn-light my-3'
+        onClick={() => {
+          const _from = localStorage.getItem('product-details')
+          localStorage.removeItem('product-details')
+          if (_from === 'from-profile') {
+            history.push('/profile')
+          } else {
+            history.push('/')
+          }
+      }}>
         Go Back
-      </Link>
+      </button>
       {error ? (
         <Message variant='danger'>{error}</Message>
       ) : (
-        !loading &&
         productDetails && (
           <>
             <Meta title={product.name} />
@@ -81,72 +166,66 @@ const ProductScreen = ({ history, match }) => {
                       text={`${product.numReviews} reviews`}
                     />
                   </ListGroup.Item>
-                  <ListGroup.Item>Price: ${product.price}</ListGroup.Item>
+                  <ListGroup.Item>
+                    <h4>
+                      Price: ${product.price}
+                    </h4>
+                  </ListGroup.Item>
                   <ListGroup.Item>
                     Description: {product.description}
                   </ListGroup.Item>
                 </ListGroup>
               </Col>
-              <Col md={3}>
-                <Card>
-                  <ListGroup.Item>
-                    <Row>
-                      <Col>Price:</Col>
-                      <Col>
-                        <strong>${product.price}</strong>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                  <ListGroup.Item>
-                    <Row>
-                      <Col>Status:</Col>
-                      <Col>
-                        <strong>
-                          {product.countInStock > 0
-                            ? 'In Stock'
-                            : 'Out of Stock'}
-                        </strong>
-                      </Col>
-                    </Row>
-                  </ListGroup.Item>
-                  {product.countInStock > 0 && (
+              {userInfo && (
+                <Col md={3}>
+                  <Card>
                     <ListGroup.Item>
-                      <Row>
-                        <Col>Qty</Col>
-                        <Col>
-                          <select
-                            className='product-select'
-                            value={qty}
-                            onChange={(e) => setQty(e.target.value)}
-                          >
-                            {[...Array(product.countInStock).keys()].map(
-                              (x) => (
-                                <option
-                                  className='product-option'
-                                  key={x + 1}
-                                  value={x + 1}
-                                >
-                                  {x + 1}
-                                </option>
-                              )
-                            )}
-                          </select>
-                        </Col>
-                      </Row>
+                      <Form.Group controlId='name'>
+                        <Form.Label>Price</Form.Label>
+                        <Form.Control
+                          type='number'
+                          placeholder='Enter New Price'
+                          value={newPrice}
+                          onChange={(e) => setNewPrice(e.target.value)}
+                        ></Form.Control>
+                      </Form.Group>
+                      <Button
+                        className='btn-block'
+                        type='button'
+                        disabled={parseInt(product.price) > parseInt(newPrice) || product.status !== 'Active' }
+                        onClick={bidHandler}
+                      >
+                        BID
+                      </Button>
                     </ListGroup.Item>
-                  )}
-                  <ListGroup.Item>
-                    <Button
-                      className='btn-block'
-                      type='button'
-                      disabled={product.countInStock === 0}
-                      onClick={addToCartHandler}
-                    >
-                      Add to Cart
-                    </Button>
-                  </ListGroup.Item>
-                </Card>
-              </Col>
+                    {product?.user === userInfo?._id && (
+                      <ListGroup.Item>
+                        <Form.Group controlId='rating'>
+                          <Form.Label>Status</Form.Label>
+                          <Form.Control
+                            as='select'
+                            value={productStatus}
+                            onChange={(e) => setProductStatus(e.target.value)}
+                          >
+                            <option value=''>Select...</option>
+                            <option value='Draft'>Draft</option>
+                            <option value='Active'>Active</option>
+                            <option value='Sold'>Sold</option>
+                            <option value='Expired'>Expired</option>
+                          </Form.Control>
+                        </Form.Group>
+                        <Button
+                          className='btn-block'
+                          type='button'
+                          onClick={submitStatusHandler}
+                        >
+                          UPDATE
+                        </Button>
+                      </ListGroup.Item>
+                    )}
+                  </Card>
+                </Col>
+              )}
             </Row>
             <Row>
               <Col md={6}>
@@ -155,7 +234,7 @@ const ProductScreen = ({ history, match }) => {
                 <ListGroup variant='flush'>
                   {product.reviews.map((review) => (
                     <ListGroup.Item key={review._id}>
-                      <storng>{review.name}</storng>
+                      <strong>{review.name}</strong>
                       <Rating value={review.rating} />
                       <p>{review.createdAt.substring(0, 10)}</p>
                       <p>{review.comment}</p>

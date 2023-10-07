@@ -1,12 +1,10 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Route } from 'react-router-dom'
 import { Container } from 'react-bootstrap'
-import socketIOClient from 'socket.io-client'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import HomeScreens from './screens/HomeScreens'
 import ProductScreen from './screens/ProductScreen'
-import CartScreen from './screens/CartScreen'
 import LoginScreen from './screens/LoginScreen'
 import RegisterScreen from './screens/RegisterScreen'
 import ProfileScreen from './screens/ProfileScreen'
@@ -36,7 +34,7 @@ function App() {
             <Route path='/register' component={RegisterScreen} />
             <Route path='/profile' component={ProfileScreen} />
             <Route path='/product/:id' component={ProductScreen} />
-            <Route path='/cart/:id?' component={CartScreen} />
+            {/* <Route path='/cart/:id?' component={CartScreen} /> */}
             <Route path='/admin/user-list' component={UserListScreen} />
             <Route path='/admin/user/:id/edit' component={UserEditScreen} />
             <Route
