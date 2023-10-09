@@ -6,7 +6,11 @@ import Product from '../models/productModel.js'
 // @route   GET /api/bids/:productId
 // @access  Public
 const getBidByProductId = asyncHandler(async (req, res) => {
-  const bids = await Bid.find({ product: req.params.productId })
+  const bids = await Bid
+    .find({ product: req.params.productId })
+    .populate('user', 'id name')
+    .sort({ createdAt: -1 })
+  console.log('bids length: ', bids.length)
   if (bids) {
     res.json(bids)
   } else {

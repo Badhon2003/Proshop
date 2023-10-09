@@ -18,6 +18,7 @@ import ProductListScreen from './screens/ProductListScreen'
 import ProductEditScreen from './screens/ProductEditScreen'
 import OrderListScreen from './screens/OrderListScreen'
 import { SocketProvider } from './contexts/SocketContext'
+import BidScreen from './screens/BidScreen'
 
 function App() {
   return (
@@ -26,16 +27,17 @@ function App() {
         <Header />
         <main className='py-3'>
           <Container>
-            <Route path='/order/:id' component={OrderScreen} />
-            <Route path='/placeorder' component={PlaceOrderScreen} />
-            <Route path='/shipping' component={ShippingScreen} />
-            <Route path='/payment' component={PaymentScreen} />
+            {/* <Route path='/order/:id' component={OrderScreen} /> */}
+            {/* <Route path='/placeorder' component={PlaceOrderScreen} /> */}
+            {/* <Route path='/shipping' component={ShippingScreen} />
+            <Route path='/payment' component={PaymentScreen} /> */}
             <Route path='/login' component={LoginScreen} />
             <Route path='/register' component={RegisterScreen} />
             <Route path='/profile' component={ProfileScreen} />
             <Route path='/product/:id' component={ProductScreen} />
             {/* <Route path='/cart/:id?' component={CartScreen} /> */}
             <Route path='/admin/user-list' component={UserListScreen} />
+            <Route path='/admin/bids/:id' component={BidScreen} />
             <Route path='/admin/user/:id/edit' component={UserEditScreen} />
             <Route
               path='/admin/product-list'
@@ -48,7 +50,7 @@ function App() {
               exact
             />
             <Route path='/admin/product/:id/edit' component={ProductEditScreen} />
-            <Route path='/admin/order-list' component={OrderListScreen} />
+            {/* <Route path='/admin/order-list' component={OrderListScreen} /> */}
             <Route path='/search/:keyword' component={HomeScreens} exact />
             <Route path='/page/:page' component={HomeScreens} exact />
             <Route

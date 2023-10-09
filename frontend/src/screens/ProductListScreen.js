@@ -68,6 +68,22 @@ const ProductListScreen = ({ history, match }) => {
     dispatch(createProduct())
   }
 
+  const getStatusColorClassName = (_status) => {
+    let _class = ''
+    if (_status === 'Active') {
+      _class = 'text-success'
+    }
+    if (_status === 'Expired') {
+      _class = 'text-warning'
+    }
+
+    if (_status === 'Sold') {
+      _class = 'text-info'
+    }
+
+    return _class
+  }
+
   return (
     <>
       <Row className='align-items-center'>
@@ -98,7 +114,7 @@ const ProductListScreen = ({ history, match }) => {
             >
               <thead>
                 <tr>
-                  <th>ID</th>
+                  {/* <th>ID</th> */}
                   <th>NAME</th>
                   <th>PRICE</th>
                   <th>STATUS</th>
@@ -110,14 +126,19 @@ const ProductListScreen = ({ history, match }) => {
               <tbody>
                 {products.map((product) => (
                   <tr key={product._id}>
-                    <td>{product._id}</td>
+                    {/* <td>{product._id}</td> */}
                     <td>{product.name}</td>
                     <td>${product.price}</td>
-                    <td>{product.status}</td>
+                    <td className={getStatusColorClassName(product.status)}>{product.status}</td>
                     <td>{product.category}</td>
                     <td>{product.brand}</td>
 
                     <td>
+                      <LinkContainer to={`/admin/bids/${product._id}`}>
+                        <Button variant='light' className='btn-sm' onClick={() => localStorage.setItem('view-bids', 'from-admin-product-list')}>
+                          <i className='fas fa-gavel'></i>
+                        </Button>
+                      </LinkContainer>
                       <LinkContainer to={`/admin/product/${product._id}/edit`}>
                         <Button variant='light' className='btn-sm'>
                           <i className='fas fa-edit'></i>

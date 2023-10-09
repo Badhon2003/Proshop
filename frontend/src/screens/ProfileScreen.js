@@ -211,7 +211,7 @@ const ProfileScreen = ({ location, history }) => {
                           <td>{product.brand}</td>
 
                           <td>
-                            <LinkContainer to={`/admin/product/${product._id}/edit`}>
+                            <LinkContainer to={`/admin/bids/${product._id}`}>
                               <Button variant='light' className='btn-sm' onClick={() => localStorage.setItem('view-bids', 'from-profile')}>
                                 <i className='fas fa-gavel'></i>
                               </Button>
@@ -274,6 +274,11 @@ const ProfileScreen = ({ location, history }) => {
                           <td>{product.category}</td>
                           <td>{product.brand}</td>
                           <td>
+                            <LinkContainer to={`/admin/bids/${product._id}`}>
+                              <Button variant='light' className='btn-sm' onClick={() => localStorage.setItem('view-bids', 'from-profile')}>
+                                <i className='fas fa-gavel'></i>
+                              </Button>
+                            </LinkContainer>
                             <LinkContainer to={`/product/${product._id}`}>
                               <Button variant='light' className='btn-sm' onClick={() => localStorage.setItem('product-details', 'from-profile')}>
                                 <i className='fas fa-eye'></i>

@@ -8,6 +8,6 @@ import { protect } from '../middleware/authMiddleware.js'
 const router = express.Router()
 
 router.route('/').post(protect, createBid)
-router.route('/:productId').post(protect, getBidByProductId)
+router.route('/:productId').get(protect, getBidByProductId)
 
 export default router
