@@ -16,7 +16,7 @@ const ProfileScreen = ({ location, history }) => {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [message, setMessage] = useState(null)
-  const [tabKey, setTabKey] = useState('purchased-products');//profile
+  const [tabKey, setTabKey] = useState('profile');//profile
 
   const dispatch = useDispatch()
 
